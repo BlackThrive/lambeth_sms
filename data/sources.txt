@@ -1,0 +1,8 @@
+Population data
+    Filename: lambeth_population_2021_10_29.xlsx
+    Source: APS (https://www.nomisweb.co.uk/datasets/apsnew)
+    Variables: geo == Lambeth; time == 12 months to Jun 2021; table == ethnicity by age
+
+Stop and Search
+    Filename: Stops_LDS_Extract_12MonthsToEnd_202109.csv
+    Source: MPS Stop and Search Dashboard data (https://data.london.gov.uk/dataset/mps-stop-and-search-public-dashboard-data)
