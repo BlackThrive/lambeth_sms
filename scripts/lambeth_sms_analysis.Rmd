@@ -1,0 +1,423 @@
+---
+title: "Untitled"
+author: "JMW"
+date: "05/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Packages
+```{r cars}
+library(gmodels)
+library(ggplot2)
+library(tidyverse)
+library(kableExtra)
+```
+
+
+# Good development
+
+```{r}
+b <- data.frame("black" = c(807, 380))
+w <- data.frame("white" = c(493, 101))
+df <- cbind(b,w)
+rownames(df) <- c("good dev","no good dev")
+mat <- as.matrix(df)
+CrossTable(mat, chisq = T, fisher = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_gld <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+```
+
+```{r}
+or <- dat[["fisher.ts"]][["estimate"]][["odds ratio"]][[1]]
+ci_low <- dat[["fisher.ts"]][["conf.int"]][[1]]
+ci_upp <- dat[["fisher.ts"]][["conf.int"]][[2]]
+
+temp_dat <- data.frame("var" = "Good development", 
+                       "or" = dat[["fisher.ts"]][["estimate"]][["odds ratio"]][[1]], 
+                       "ci_low" = dat[["fisher.ts"]][["conf.int"]][[1]],
+                       "ci_upp" = dat[["fisher.ts"]][["conf.int"]][[2]]
+)
+
+ggplot(temp_dat, aes(var, or)) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_upp), width = 0.1) +
+  scale_y_continuous(limits = c(0,1.5), breaks = seq(0,1.5,0.1), labels = c(seq(0,.9,.1),"1 \n (Just as likely)", seq(1.1,1.5,.1))) + 
+  coord_flip() +
+  geom_hline(yintercept = 1) +
+  theme_bw() +
+  theme(axis.title.y = element_blank()) +
+  ylab("Odds Ratio \n (i.e. likelihood of outcome for Black children compared to White children)") +
+  annotate("segment", x = 1.25, xend = 1.25, y = .9,yend = 0, arrow = arrow(),  size = 2) +
+  geom_text(x = 1.4, y = .1, label = "Less likely") +
+  annotate("segment", x = 1.25, xend = 1.25, y = 1.1,yend = 1.5, arrow = arrow(),  size = 2) +
+  geom_text(x = 1.4, y = 1.4, label = "More likely")
+```
+
+
+# GCSE
+```{r}
+b <- data.frame("black" = c(654, 494))
+w <- data.frame("white" = c(140, 83))
+df <- df <- cbind(b,w)
+rownames(df) <- c("Level 4+","Not level 4+")
+mat <- as.matrix(df)
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_gcse <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+```{r}
+or <- dat[["fisher.ts"]][["estimate"]][["odds ratio"]][[1]]
+ci_low <- dat[["fisher.ts"]][["conf.int"]][[1]]
+ci_upp <- dat[["fisher.ts"]][["conf.int"]][[2]]
+
+temp_dat <- data.frame("var" = "Level 4+ GCSE English and Maths", 
+                       "or" = dat[["fisher.ts"]][["estimate"]][["odds ratio"]][[1]], 
+                       "ci_low" = dat[["fisher.ts"]][["conf.int"]][[1]],
+                       "ci_upp" = dat[["fisher.ts"]][["conf.int"]][[2]]
+)
+
+ggplot(temp_dat, aes(var, or)) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_upp), width = 0.1) +
+  scale_y_continuous(limits = c(0,1.5), breaks = seq(0,1.5,0.1), labels = c(seq(0,.9,.1),"1 \n (Just as likely)", seq(1.1,1.5,.1))) + 
+  coord_flip() +
+  geom_hline(yintercept = 1) +
+  theme_bw() +
+  theme(axis.title.y = element_blank()) +
+  ylab("Odds Ratio \n (i.e. likelihood of outcome for Black children compared to White children)") +
+  annotate("segment", x = 1.25, xend = 1.25, y = .9,yend = 0, arrow = arrow(),  size = 2) +
+  geom_text(x = 1.4, y = .1, label = "Less likely") +
+  annotate("segment", x = 1.25, xend = 1.25, y = 1.1,yend = 1.5, arrow = arrow(),  size = 2) +
+  geom_text(x = 1.4, y = 1.4, label = "More likely")
+
+```
+
+
+# Free meals
+```{r}
+b <- data.frame("black" = c(3165,7678))
+w <- data.frame("white" = c(429,3471))
+df <- cbind(b,w)
+rownames(df) <- c("free meals","no free meals")
+mat <- as.matrix(df)
+
+chisq.test(df)
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_free_meals <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+```
+
+# Employment
+```{r}
+b <- data.frame("black" = c(30800,20534))
+w <- data.frame("white" = c(117700,20771))
+df <- cbind(b,w)
+rownames(df) <- c("employed","not employed")
+
+mat <- as.matrix(df)
+chisq.test(df)
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_employment <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# CAMHS waiting time
+
+```{r}
+b <- data.frame("black" = c(151,171))
+w <- data.frame("white" = c(95,108))
+df <- cbind(b,w)
+rownames(df) <- c("wait 13+ weeks","not wait 13+ weeks")
+
+mat <- as.matrix(df)
+chisq.test(df)
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_camhs <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# Talking therapies severely depressed on entry
+```{r}
+b <- data.frame("black" = c(1020,550))
+w <- data.frame("white" = c(1563,1563))
+df <- cbind(b,w)
+rownames(df) <- c("sev dep on entry","not sev dep on entry")
+
+mat <- as.matrix(df)
+chisq.test(df)
+
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_talking_therapies <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# Section 136
+```{r}
+b <- data.frame("black" = c(38,6333296))
+w <- data.frame("white" = c(44,10999956))
+df <- cbind(b,w)
+rownames(df) <- c("detained","not detained")
+
+mat <- as.matrix(df)
+chisq.test(df)
+
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_section_136 <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# Physical restraint
+```{r}
+b <- data.frame("black" = c(228,123))
+w <- data.frame("white" = c(70,110))
+df <- cbind(b,w)
+rownames(df) <- c("restraint","not restraint")
+
+mat <- as.matrix(df)
+chisq.test(df)
+
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_restraint <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# Looked after by local authority
+```{r}
+b <- data.frame("black" = c(280,3043199))
+w <- data.frame("white" = c(57,1499943))
+df <- cbind(b,w)
+rownames(df) <- c("looked after","not looked after")
+
+mat <- as.matrix(df)
+chisq.test(df)
+
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_cla <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# In temporary accommodation
+
+```{r}
+b <- data.frame("black" = c(1169,3246054))
+w <- data.frame("white" = c(166,5533168))
+df <- cbind(b,w)
+rownames(df) <- c("in temp accomm","not in temp accomm")
+
+mat <- as.matrix(df)
+chisq.test(df)
+
+CrossTable(mat, chisq = T, fisher = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_temp_accomm <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+```
+
+# Stop and search
+
+```{r}
+# stop and search
+data <- read.csv("../data/Stops_LDS_Extract_12MonthsToEnd_202109.csv")
+
+data <- subset(data, Borough.of.Stop == "Lambeth") # subset to Lambeth
+
+# officer-defined ethnicity
+appearance_freq_data <- data %>%
+  group_by(EA.Group) %>%
+  summarise(
+    stopped = n() # count frequencies
+  )
+
+appearance_freq_data <- appearance_freq_data %>%
+  mutate(
+    pop = c(6500, 54600, 26700, 177400), # Lambeth population estimates taken from APS 12 months to Jun 2021
+    percentage = 100 * (stopped/pop),
+    not_stopped = pop - stopped
+    ) %>%
+  rename(
+    ethnicity = EA.Group
+  )
+
+appearance_freq_data <- as.data.frame(appearance_freq_data)
+row.names(appearance_freq_data) <- appearance_freq_data$ethnicity
+
+black <- data.frame("Black" = c("stopped" = appearance_freq_data["Black", "stopped"], "not_stopped" = appearance_freq_data["Black", "not_stopped"]))
+
+white <- data.frame("White" = c("stopped" = appearance_freq_data["White", "stopped"], "not_stopped" = appearance_freq_data["White", "not_stopped"]))
+
+bw_mat <- as.matrix(cbind(black, white))
+
+CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+fisher.test(mat, simulate.p.value = T)
+
+xtab_stop_search <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+
+plot_data <- subset(appearance_freq_data, ethnicity == "Black" | ethnicity == "White")
+
+ggplot(plot_data, aes(ethnicity, percentage)) + 
+  geom_col(colour = "black", fill = "#ff9000", width = .5) +
+  scale_y_continuous(limits =  c(0,20), breaks = seq(0,20,5), expand = c(0,0)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
+  xlab("Ethnicity") + ylab("Percentage of individuals \n subject to Police Stop and Search")
+
+```
+
+
+# Results
+
+## Dataframe
+```{r}
+# dataframe for odds ratios and cis
+
+or_df <- data.frame("indicator" = c("Employment", 
+                                 "Level 4+ GCSE Maths & English", 
+                                 "Good level of development at age 5",
+                                 "Homeless or in temporary accommodation",
+                                 "Police Stop and Search",
+                                 "Children looked after by local authority",
+                                 "Physical restraint in Lambeth wards",
+                                 "Mod./Sev. depressed on entry to Talking Therapies",
+                                 "Section 136 detentions"),
+                 "OR" = c(
+                   xtab_employment[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_gcse[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_gld[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_temp_accomm[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_stop_search[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_cla[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_restraint[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_talking_therapies[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_section_136[["fisher.ts"]][["estimate"]][[1]]
+                 ),
+                 "ci_low" = c(
+                   xtab_employment[["fisher.ts"]][["conf.int"]][[1]], 
+                   xtab_gcse[["fisher.ts"]][["conf.int"]][[1]], 
+                   xtab_gld[["fisher.ts"]][["conf.int"]][[1]], 
+                   xtab_temp_accomm[["fisher.ts"]][["conf.int"]][[1]], 
+                   xtab_stop_search[["fisher.ts"]][["conf.int"]][[1]],
+                   xtab_cla[["fisher.ts"]][["conf.int"]][[1]],
+                   xtab_restraint[["fisher.ts"]][["conf.int"]][[1]],
+                   xtab_talking_therapies[["fisher.ts"]][["conf.int"]][[1]],
+                   xtab_section_136[["fisher.ts"]][["conf.int"]][[1]]
+                 ),
+                 "ci_upp" = c(
+                   xtab_employment[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_gcse[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_gld[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_temp_accomm[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_stop_search[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_cla[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_restraint[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_talking_therapies[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_section_136[["fisher.ts"]][["conf.int"]][[2]]
+                 )
+)
+
+# or_df$indicator <- factor(black_df$indicator, levels = c("Employment", "Good level of development at age 5", "Level 4+ GCSE Maths & English", "Children looked after","Police Stop and Search","Homeless or at risk of being homeless"))
+            
+```
+
+## Plot
+
+```{r include = TRUE}
+# test rescaling below 1, horizontal orientation , without caption
+bt_orange <- "#ff9000"
+or_df_2 <- or_df
+
+or_df_2$original_OR <- or_df_2$OR # keep original OR values
+
+or_df_2 <- or_df_2[order(or_df_2$OR),] # order df from lowest to highest
+or_df_2$indicator <- fct_inorder(or_df_2$indicator) # put levels in order they appear in df
+
+reduction_factor <- 14 # set reduction factor
+for(i in 1:nrow(or_df_2)){
+  if(or_df_2$OR[i] < 1){ # expand values below 1
+    or_df_2$OR[i] <- reduction_factor * (0 - (1 - or_df_2$OR[i]))
+    or_df_2$ci_low[i] <- reduction_factor * (0 - (1 - or_df_2$ci_low[i]))
+    or_df_2$ci_upp[i] <- reduction_factor * (0 - (1 - or_df_2$ci_upp[i]))
+  }
+  else{ # transform values above one
+      or_df_2$OR[i] <- or_df_2$OR[i] - 1 
+    or_df_2$ci_low[i] <- or_df_2$ci_low[i] - 1
+    or_df_2$ci_upp[i] <- or_df_2$ci_upp[i] - 1
+  }
+}
+
+ggplot(or_df_2, aes(indicator, OR)) +
+  geom_hline(yintercept = 0, colour = bt_orange, size = 1) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_upp), width = 0.2) +
+  scale_y_continuous(expand = c(0, 0), limits = c(reduction_factor * -1, reduction_factor), breaks = c((reduction_factor * -1) * 0.9, 0.5 * reduction_factor - reduction_factor, 0.75 * reduction_factor - reduction_factor, 0, 2, 4, 7, 11), labels = c(
+    "10x less likely",
+    "Half as likely",
+    "3/4 as likely",
+    "Just as likely",
+    "3x more likely",
+    "5x more likely",
+    "8x more likely",
+    "12x more likely")) +
+  expand_limits(x = c(0,nrow(or_df) + 2)) + # for expanding discrete scale
+  ylab("Likelihood of outcome compared to White ethnicity") +
+  coord_flip() +
+  theme_bw() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title.x = element_text(colour = "black"),
+    axis.title.y = element_blank(),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    panel.background = element_rect(fill = "white"),
+    plot.background = element_rect(fill = "white"),
+    text = element_text(family = "archivo", size = 12),
+    axis.text = element_text(family = "archivo", colour = "black"),
+    plot.caption = element_text(face = "italic"),
+    plot.title = element_text(size = 12)
+  ) +
+  annotate("segment", x = nrow(or_df) + 1, xend = nrow(or_df) + 1, y = reduction_factor/30, yend = reduction_factor * 0.9, arrow = arrow(angle = 45), size = 1) +
+  geom_text(x = nrow(or_df) + 1.5, y = reduction_factor*.9 - (reduction_factor*0.1), label = "More likely", colour = "black", size = 3.5, hjust = 1) +
+  annotate("segment", x = nrow(or_df) + 1, xend =  nrow(or_df) + 1, y = (reduction_factor/-30), yend = -1*reduction_factor*0.9, arrow = arrow(angle = 45), size = 1) +
+  geom_text(x = nrow(or_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.1), label = "Less likely", colour = "black", size = 3.5, hjust = 0) +
+  #geom_text(size = 3, nudge_x = -0.3, nudge_y = 0, aes(x = indicator,label = paste("OR =", round(original_OR, 2)),hjust = 0)) +
+  geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_OR, 2),"x", sep=""),hjust = 0.5)) +
+  ggtitle("The likelihood of outcomes for the Black population compared to the White population")
+  #labs(caption = "Note. OR = Odds ratio; bars represent 95% confidence interval")
+
+#ggsave(filename = "../images/or_plot.png", width = 10, height = 6)
+```
+
+## Table
+
+```{r include = TRUE}
+# table with ORS and CIS
+
+or_df_3 <- or_df %>%
+  mutate(
+    OR = round(OR, 2),
+    ci_low = round(ci_low, 2),
+    ci_upp = round(ci_upp, 2)
+  )
+or_df_3 <- or_df_3[order(-c(or_df_3$OR)),]
+
+or_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Odds Ratio", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Odds ratios and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
+```
