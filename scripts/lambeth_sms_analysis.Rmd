@@ -8,11 +8,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(include = FALSE)
 ```
 
 # Packages
-```{r cars}
+```{r}
 library(gmodels)
 library(ggplot2)
 library(tidyverse)
@@ -20,13 +21,14 @@ library(kableExtra)
 library(epitools)
 library(showtext)
 showtext_auto(enable = F)
-# font_add("archivo",
-#          regular = "../fonts/static/Archivo/Archivo-Regular.ttf",
-#          italic = "../fonts/static/Archivo/Archivo-Italic.ttf",
-#          bold = "../fonts/static/Archivo/Archivo-Bold.ttf",
-#          bolditalic = "../fonts/static/Archivo/Archivo-BoldItalic.ttf"
-# )
-# showtext_opts(dpi = 300)
+font_add("archivo",
+         regular = "../fonts/static/Archivo/Archivo-Regular.ttf",
+         italic = "../fonts/static/Archivo/Archivo-Italic.ttf",
+         bold = "../fonts/static/Archivo/Archivo-Bold.ttf",
+         bolditalic = "../fonts/static/Archivo/Archivo-BoldItalic.ttf"
+)
+resolution <- 1000
+showtext_opts(dpi = resolution)
 ```
 
 
@@ -39,12 +41,12 @@ w <- data.frame("white" = c(493, 101))
 df <- cbind(b,w)
 rownames(df) <- c("good dev","no good dev")
 mat <- as.matrix(df)
-CrossTable(mat, chisq = T, fisher = T)
-fisher.test(mat, simulate.p.value = T)
 
 gld_df <- df # save df
 
-xtab_gld <- CrossTable(mat, chisq = T, fisher = T, expected = T) # save xtab for later
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_gld <- xtab # save xtab for later
 ```
 
 # GCSE
@@ -54,25 +56,30 @@ w <- data.frame("white" = c(140, 83))
 df <- df <- cbind(b,w)
 rownames(df) <- c("Level 4+","Not level 4+")
 mat <- as.matrix(df)
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
+
 gcse_df <- df # save df
-xtab_gcse <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_gcse <- xtab # save xtab for later
+
 ```
 
 # Employment
+
 ```{r}
 b <- data.frame("black" = c(30800,20534))
 w <- data.frame("white" = c(117700,20771))
 df <- cbind(b,w)
 rownames(df) <- c("employed","not employed")
-
 mat <- as.matrix(df)
 chisq.test(df)
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
+
 employment_df <- df # save df
-xtab_employment <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_employment <- xtab # save xtab for later
 ```
 
 
@@ -83,14 +90,15 @@ b <- data.frame("black" = c(1020,550))
 w <- data.frame("white" = c(1563,1563))
 df <- cbind(b,w)
 rownames(df) <- c("sev dep on entry","not sev dep on entry")
-
 mat <- as.matrix(df)
-chisq.test(df)
 
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
+
 talking_therapies_df <- df # save df
-xtab_talking_therapies <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_talking_therapies <- xtab # save xtab for later 
+
 ```
 
 # Section 136
@@ -100,14 +108,13 @@ b <- data.frame("black" = c(38,63296))
 w <- data.frame("white" = c(44,109956))
 df <- cbind(b,w)
 rownames(df) <- c("detained","not detained")
-
 mat <- as.matrix(df)
-chisq.test(df)
 
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
 sect_136_df <- df # save df
-xtab_section_136 <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_section_136 <- xtab # save xtab for later
 ```
 
 # Physical restraint
@@ -117,14 +124,13 @@ b <- data.frame("black" = c(228,123))
 w <- data.frame("white" = c(70,110))
 df <- cbind(b,w)
 rownames(df) <- c("restraint","not restraint")
-
 mat <- as.matrix(df)
-chisq.test(df)
 
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
 restraint_df <- df # save df
-xtab_restraint <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_restraint <- xtab # save xtab for later
 ```
 
 # Looked after by local authority
@@ -134,14 +140,13 @@ b <- data.frame("black" = c(280,30155))
 w <- data.frame("white" = c(57,14943))
 df <- cbind(b,w)
 rownames(df) <- c("looked after","not looked after")
-
 mat <- as.matrix(df)
-chisq.test(df)
 
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
 cla_df <- df # save df
-xtab_cla <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_cla <- xtab # save xtab for later
 ```
 
 # In temporary accommodation
@@ -151,14 +156,13 @@ b <- data.frame("black" = c(1169,31304))
 w <- data.frame("white" = c(166,55168))
 df <- cbind(b,w)
 rownames(df) <- c("in temp accomm","not in temp accomm")
-
 mat <- as.matrix(df)
-chisq.test(df)
 
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
 temp_accomm_df <- df # save df
-xtab_temp_accomm <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_temp_accomm <- xtab # save xtab for later
 ```
 
 # Stop and search
@@ -195,11 +199,11 @@ white <- data.frame("White" = c("stopped" = appearance_freq_data["White", "stopp
 
 bw_mat <- as.matrix(cbind(black, white))
 
-CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
-fisher.test(bw_mat, simulate.p.value = T)
-
 stop_search_df <- as.data.frame(bw_mat) # save df
-xtab_stop_search <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+
+# run analysis
+xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
+xtab_stop_search <- xtab # save xtab for later
 
 plot_data <- subset(appearance_freq_data, ethnicity == "Black" | ethnicity == "White")
 
@@ -218,7 +222,6 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 # Results
 
-## Dataframe
 
 ```{r or_df, include = FALSE}
 # dataframe for odds ratios and cis
@@ -271,18 +274,17 @@ or_df <- data.frame("indicator" = c("Employment (2020)",
             
 ```
 
-## Plot
 
 The plot below shows that the Black population in Lambeth experience worse outcomes than the White population on nearly every indicator measured. To summarise: 
-* Black individuals are 25% as likely as White individuals to be in employment.
-* Black children are over 50% less likely than White children to reach a good level of development at age 5.
+* Black individuals are 29% less likely than White individuals to be in employment.
+* Black children are over 18% less likely than White children to reach a Good Level of Development at age 5.
 * Black pupils are just as likely as White pupils to achieve at least Level 4 in GCSE Maths and English.
+* Black individuals are 30% more likely than White individuals to be moderately to severely depressed when they start Talking Therapies.
 * Black individuals are just as likely as White individuals to be detained under Section 136 of the Mental Health Act.
-* Black individuals are nearly two times more likely as White individuals to be moderately to severely depressed when they start Talking Therapies.
-* Black children are over two times more likely as White children to be looked after the local authority.
-* Black ward patients are nearly three times more likely than White ward patients to be physically restrained.
-* Black individuals are eight times more likely than White individuals to be stopped and searched by Police.
-* Black households are over twelve times as likely as White households to be homeless and living in temporary accommodation.
+* Black ward patients are 67% more likely than White ward patients to be physically restrained.
+* Black children are over 2.4 times more likely as White children to be looked after the local authority.
+* Black individuals are nearly seven times more likely than White individuals to be stopped and searched by Police.
+* Black households are twelve times as likely as White households to be homeless and living in temporary accommodation.
 
 ```{r or_plot, include = FALSE}
 # test rescaling below 1, horizontal orientation , without caption
@@ -398,7 +400,6 @@ rr_df <- rbind(rr_gld,
 
 ```
 
-## RR Plot
 
 ```{r rr_plot, include = TRUE}
 # test rescaling below 1, hrrizontal orientation , without caption
@@ -424,6 +425,7 @@ for(i in 1:nrow(rr_df_2)){
   }
 }
 
+#tiff("../images/test_high.tiff", units = "in", width = 10, height = 6, res = resolution)
 ggplot(rr_df_2, aes(indicator, rr)) +
   geom_hline(yintercept = 0, colour = bt_orange, size = 1) +
   geom_point(size = 2) +
@@ -464,11 +466,12 @@ ggplot(rr_df_2, aes(indicator, rr)) +
   geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_rr, 2),"x", sep=""),hjust = 0.5)) +
   ggtitle("The likelihood of outcomes for the Black population compared to \nthe White population")
   #labs(caption = "Note. rr = Odds ratio; bars represent 95% confidence interval")
-
+#dev.off()
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
 ```
 
 ## RR table
+
 ```{r rr_table, include = TRUE}
 # table with rrS and CIS
 
@@ -480,7 +483,7 @@ rr_df_3 <- rr_df %>%
   )
 rr_df_3 <- rr_df_3[order(-c(rr_df_3$rr)),]
 
-rr_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Odds Ratio", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Odds ratios and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
+rr_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Relative risk", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Relative risk and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
 ```
 
 
@@ -492,7 +495,7 @@ The above results are broken down into percentages and rates below.
 
 In 2020, the employment rate amongst Black 16-64 year olds was 60%, compared to 85% for White individuals.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (employment_df$black[1] / sum(employment_df$black)), 2), 
                                                       round(100 * (employment_df$white[1] / sum(employment_df$white)), 2)))
@@ -509,14 +512,15 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         axis.text = element_text(colour = "black"),
         axis.title = element_text(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of 16-64 year olds in employment")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of 16-64 year olds in employment")
 ```
 
 ## Children reaching a good level of development at age 5
 
 In 2017-2018, 68% of Black children reached a Good Level of Development, compared to 83% of White children.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (gld_df$black[1] / sum(gld_df$black)), 2), 
                                                       round(100 * (gld_df$white[1] / sum(gld_df$white)), 2)))
@@ -533,14 +537,15 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         axis.text = element_text(colour = "black"),
         axis.title = element_text(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of children reaching \n Good Level of Development")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of children reaching a Good Level of Development")
 ```
 
 ## Pupils achieving Level 4+ in GCSE Maths and English
 
 In 2018, 57% of Black pupils and 63% of White pupils achieved at least Level 4 in GCSE Maths and English. This difference was non-significant.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (gcse_df$black[1] / sum(gcse_df$black)), 2), 
                                                       round(100 * (gcse_df$white[1] / sum(gcse_df$white)), 2)))
@@ -554,14 +559,15 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of pupils achieving \n4+ in GCSE Maths and English")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of pupils achieving 4+ in GCSE Maths and English")
 ```
 
 ## Individuals subject to detention per Section 136 of the Mental Health Act
 
 In 2018-2019, the rate of individuals detained under Section 136 of the Mental Health act was 60 per 100,000 for Black individuals, compared to 40 per 100,000 for White individuals.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "per_100k" = c(round(100000 * (sect_136_df$black[1] / sum(sect_136_df$black)), 0), 
                                                       round(100000 * (sect_136_df$white[1] / sum(sect_136_df$white)), 0)))
@@ -575,7 +581,8 @@ ggplot(plot_data, aes(ethnicity, per_100k)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(per_100k,2), sep = ""))) +
-  xlab("Ethnicity") + ylab("Number of individuals detained via Section 136 per 100,000")
+  xlab("Ethnicity") + ylab("Number per 100,000") +
+  ggtitle("Number of individuals detained via Section 136 per 100,000")
 
 ```
 
@@ -583,7 +590,7 @@ ggplot(plot_data, aes(ethnicity, per_100k)) +
 
 In 2017-2018, 65% of Black individuals were moderately to severely depressed before starting Talking Therapies, compared to 50% of White individuals.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (talking_therapies_df$black[1] / sum(talking_therapies_df$black)), 2), 
                                                       round(100 * (talking_therapies_df$white[1] / sum(talking_therapies_df$white)), 2)))
@@ -597,7 +604,8 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of individuals moderately/severely depreseed \non entry to Talking Therapies")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of individuals moderately/severely depreseed \non entry to Talking Therapies")
 
 ```
 
@@ -605,7 +613,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 In 2017-2018, 0.92% of Black children were looked after by the local authority, compared to 0.38% of White children.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (cla_df$black[1] / sum(cla_df$black)), 2), 
                                                       round(100 * (cla_df$white[1] / sum(cla_df$white)), 2)))
@@ -619,7 +627,8 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of children looked after by the local authority")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of children looked after by the local authority")
 
 ```
 
@@ -627,7 +636,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 In 2017-2018, 65% of Black Lambeth ward patients had physical restraint used on them, compared to 39% of White patients.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (restraint_df$black[1] / sum(restraint_df$black)), 2), 
                                                       round(100 * (restraint_df$white[1] / sum(restraint_df$white)), 2)))
@@ -641,7 +650,8 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of Lambeth ward patients \nsubject to physical restraint")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of Lambeth ward patients \nsubject to physical restraint")
 
 ```
 
@@ -649,7 +659,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 In the period from September 2020 to August 2021, 15% of Black individuals in Lambeth were stopped and searched by Police, compared to 2% of White individuals.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (stop_search_df$Black[1] / sum(stop_search_df$Black)), 2), 
                                                       round(100 * (stop_search_df$White[1] / sum(stop_search_df$White)), 2)))
@@ -663,7 +673,8 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of individuals subject to Police Stop and Search")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of individuals subject to Police Stop and Search")
 
 ```
 
@@ -671,7 +682,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 In 2018, 3.6% of Black households were statutorily homeless and in temporary accommodation, compared to 0.3% of White households.
 
-```{r}
+```{r include = TRUE}
 plot_data <- data.frame("ethnicity" = c("Black", "White"),
                                      "percentage" = c(round(100 * (temp_accomm_df$black[1] / sum(temp_accomm_df$black)), 2), 
                                                       round(100 * (temp_accomm_df$white[1] / sum(temp_accomm_df$white)), 2)))
@@ -685,6 +696,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         panel.grid.major.x = element_blank(),
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage of households in temporary accommodation")
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of households in temporary accommodation")
 
 ```
