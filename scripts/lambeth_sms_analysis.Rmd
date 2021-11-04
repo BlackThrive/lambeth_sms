@@ -223,7 +223,49 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ```
 
-# Results
+
+# Overview 
+
+This document provides a re-visualisation of Black Thrive's Shared Measurement System dashboard for Lambeth. The dashboard aims to quantify areas of inequality in Britain by comparing various indicators for the Black population compared to the White population. All data presented, apart from the Police Stop and Search data, were sourced by Lambeth Public Health in a previous analysis. The indicators, and the sources of their data (as reported by Lambeth Public Health), are presented in the table below.
+
+```{r include = TRUE, echo = FALSE}
+sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Development",
+                                        "Children looked after by local authority",
+                                    "Pupils achieving at least Level 4 in GCSE Maths & English",
+                                   
+                                    "16-64 year olds in employment",
+                                    "Households that are statutorily homeless and living in temporary accommodation",
+                                    "Individuals subject to detention per Section 136 of the Mental Health Act",
+                                    "Individuals moderately to severely depressed prior to starting Talking Therapies",
+                                    "Lambeth ward patients physically restrained",
+                                    "Individuals subject to Police Stop and Search"
+                                    
+                                    ),
+                         "Date" = c("2018/19",
+                                    "2019/20",
+                                    "2018/19",
+                                    "June 2020",
+                                    "2018",
+                                    "2018/19",
+                                    "2017/18",
+                                    "2017/18",
+                                    "12 months to end of August 2021"
+                                    ),
+                    "Source" = c("Lambeth Council, Education Research and Statistics Department",
+                                 "Lambeth Council, Education Research and Statistics Department",
+                                 "Lambeth Council, Education Research and Statistics Department",
+                                 "Annual Population Survey (NOMIS, Office for National Statistics",
+                                 "Lambeth Council Housing Advice Team",
+                                 "EPJS, South London and Maudsley NHS Foundation Trust",
+                                 "IAPTUS, South London and Maudsley NHS Foundation Trust",
+                                 "DATIX, South London and Maudsley NHS Foundation Trust",
+                                 "Metropolitan Police Stop and Search Dashboard Data"
+                                 )
+)
+
+sources_df %>% kbl() %>%
+  kable_styling(full_width = F)
+```
 
 
 ```{r or_df, include = FALSE}
@@ -279,6 +321,7 @@ or_df <- data.frame("indicator" = c("Employment (2020)",
 
 
 The plot below shows that the Black population in Lambeth experience worse outcomes than the White population on nearly every indicator measured. To summarise: 
+
 * Black individuals are 29% less likely than White individuals to be in employment.
 * Black children are over 18% less likely than White children to reach a Good Level of Development at age 5.
 * Black pupils are just as likely as White pupils to achieve at least Level 4 in GCSE Maths and English.
@@ -384,8 +427,8 @@ rr_from_df <- function(df, name){
 rr_gld <- rr_from_df(gld_df, "Good level of development at age 5 (2017-2018)")
 rr_gcse <- rr_from_df(gcse_df, "Level 4+ GCSE Maths & English (2018)")
 rr_employment <- rr_from_df(employment_df, "Employment rate (2020)")
-rr_therapies <- rr_from_df(talking_therapies_df, "Mod./Sev. depressed on entry to Talking Therapies (2017-2018)")
-rr_temp_accomm <- rr_from_df(temp_accomm_df, "Statutorily homeless and living in temporary accommodation (2018)")
+rr_therapies <- rr_from_df(talking_therapies_df, "Depressed on entry to Talking Therapies (2017-2018)")
+rr_temp_accomm <- rr_from_df(temp_accomm_df, "Statutorily homeless (2018)")
 rr_stop_search <- rr_from_df(stop_search_df, "Police Stop and Search (2020-2021)")
 rr_restraint <- rr_from_df(restraint_df, "Physical restraint in Lambeth wards (2017-2018)")
 rr_section_136 <- rr_from_df(sect_136_df, "Section 136 detentions (2018-2019)")
@@ -451,7 +494,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
     panel.grid.minor.x = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.major.x = element_blank(),
-    axis.title.x = element_text(colour = "black"),
+    axis.title.x = element_text(colour = "black", size = 10),
     axis.title.y = element_blank(),
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
     panel.background = element_rect(fill = "white"),
@@ -459,7 +502,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
     text = element_text(family = "archivo", size = 12),
     axis.text = element_text(family = "archivo", colour = "black"),
     plot.caption = element_text(face = "italic"),
-    plot.title = element_text(size = 12)
+    plot.title = element_text(size = 10)
   ) +
   annotate("segment", x = nrow(rr_df) + 1, xend = nrow(rr_df) + 1, y = reduction_factor/30, yend = reduction_factor * 0.9, arrow = arrow(angle = 45), size = 1) +
   geom_text(x = nrow(rr_df) + 1.5, y = reduction_factor*.9 - (reduction_factor*0.1), label = "More likely", colour = "black", size = 3.5, hjust = 1) +
@@ -467,7 +510,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
   geom_text(x = nrow(rr_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.1), label = "Less likely", colour = "black", size = 3.5, hjust = 0) +
   #geom_text(size = 3, nudge_x = -0.3, nudge_y = 0, aes(x = indicator,label = paste("rr =", round(original_rr, 2)),hjust = 0)) +
   geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_rr, 2),"x", sep=""),hjust = 0.5)) +
-  ggtitle("The likelihood of outcomes for the Black population compared to \nthe White population")
+  ggtitle("The likelihood of outcomes for the Black population \ncompared to the White population")
   #labs(caption = "Note. rr = Odds ratio; bars represent 95% confidence interval")
 #dev.off()
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
@@ -491,31 +534,6 @@ rr_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("In
 # Percentage breakdowns
 
 The above results are broken down into percentages and rates below.
-
-## Employment
-
-In 2020, the employment rate amongst Black 16-64 year olds was 60%, compared to 85% for White individuals.
-
-```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (employment_df$black[1] / sum(employment_df$black)), 2), 
-                                                      round(100 * (employment_df$white[1] / sum(employment_df$white)), 2)))
-
-ggplot(plot_data, aes(ethnicity, percentage)) + 
-  geom_col(colour = "black", fill = bt_orange, width = .5) +
-  scale_y_continuous(limits =  c(0,100), breaks = seq(0,100,10), expand = c(0,0)) +
-  theme(panel.background = element_rect(fill = "white"),
-        plot.background = element_rect(fill = "white"),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "black"),
-        axis.text = element_text(colour = "black"),
-        axis.title = element_text(colour = "black")) +
-  geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage") +
-  ggtitle("Percentage of 16-64 year olds in employment")
-```
 
 ## Children reaching a good level of development at age 5
 
@@ -542,6 +560,29 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
   ggtitle("Percentage of children reaching a Good Level of Development")
 ```
 
+## Children looked after by local authority
+
+In 2017-2018, 0.92% of Black children were looked after by the local authority, compared to 0.38% of White children.
+
+```{r include = TRUE}
+plot_data <- data.frame("ethnicity" = c("Black", "White"),
+                                     "percentage" = c(round(100 * (cla_df$black[1] / sum(cla_df$black)), 2), 
+                                                      round(100 * (cla_df$white[1] / sum(cla_df$white)), 2)))
+
+ggplot(plot_data, aes(ethnicity, percentage)) + 
+  geom_col(colour = "black", fill = "#ff9000", width = .5) +
+  scale_y_continuous(limits =  c(0,2), breaks = seq(0,2,1), expand = c(0,0)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of children looked after by the local authority")
+
+```
+
 ## Pupils achieving Level 4+ in GCSE Maths and English
 
 In 2018, 57% of Black pupils and 63% of White pupils achieved at least Level 4 in GCSE Maths and English. This difference was non-significant.
@@ -562,6 +603,54 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
   geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
   xlab("Ethnicity") + ylab("Percentage") +
   ggtitle("Percentage of pupils achieving 4+ in GCSE Maths and English")
+```
+
+## Employment
+
+In 2020, the employment rate amongst Black 16-64 year olds was 60%, compared to 85% for White individuals.
+
+```{r include = TRUE}
+plot_data <- data.frame("ethnicity" = c("Black", "White"),
+                                     "percentage" = c(round(100 * (employment_df$black[1] / sum(employment_df$black)), 2), 
+                                                      round(100 * (employment_df$white[1] / sum(employment_df$white)), 2)))
+
+ggplot(plot_data, aes(ethnicity, percentage)) + 
+  geom_col(colour = "black", fill = bt_orange, width = .5) +
+  scale_y_continuous(limits =  c(0,100), breaks = seq(0,100,10), expand = c(0,0)) +
+  theme(panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(colour = "black"),
+        axis.title = element_text(colour = "black")) +
+  geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of 16-64 year olds in employment")
+```
+
+## Percentage of households homeless or in temporary accommodation
+
+In 2018, 3.6% of Black households were statutorily homeless and in temporary accommodation, compared to 0.3% of White households.
+
+```{r include = TRUE}
+plot_data <- data.frame("ethnicity" = c("Black", "White"),
+                                     "percentage" = c(round(100 * (temp_accomm_df$black[1] / sum(temp_accomm_df$black)), 2), 
+                                                      round(100 * (temp_accomm_df$white[1] / sum(temp_accomm_df$white)), 2)))
+
+ggplot(plot_data, aes(ethnicity, percentage)) + 
+  geom_col(colour = "black", fill = "#ff9000", width = .5) +
+  scale_y_continuous(limits =  c(0,5), breaks = seq(0,5,1), expand = c(0,0)) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
+  xlab("Ethnicity") + ylab("Percentage") +
+  ggtitle("Percentage of households in temporary accommodation")
+
 ```
 
 ## Individuals subject to detention per Section 136 of the Mental Health Act
@@ -606,32 +695,11 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
   xlab("Ethnicity") + ylab("Percentage") +
-  ggtitle("Percentage of individuals moderately/severely depreseed \non entry to Talking Therapies")
+  ggtitle("Percentage of individuals moderately/severely depressed \non entry to Talking Therapies")
 
 ```
 
-## Children looked after by local authority
 
-In 2017-2018, 0.92% of Black children were looked after by the local authority, compared to 0.38% of White children.
-
-```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (cla_df$black[1] / sum(cla_df$black)), 2), 
-                                                      round(100 * (cla_df$white[1] / sum(cla_df$white)), 2)))
-
-ggplot(plot_data, aes(ethnicity, percentage)) + 
-  geom_col(colour = "black", fill = "#ff9000", width = .5) +
-  scale_y_continuous(limits =  c(0,2), breaks = seq(0,2,1), expand = c(0,0)) +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "black")) +
-  geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage") +
-  ggtitle("Percentage of children looked after by the local authority")
-
-```
 
 ## Individuals physically restrained on Lambeth Wards
 
@@ -652,7 +720,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
         axis.line = element_line(colour = "black")) +
   geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
   xlab("Ethnicity") + ylab("Percentage") +
-  ggtitle("Percentage of Lambeth ward patients \nsubject to physical restraint")
+  ggtitle("Percentage of Lambeth ward patients subject to physical restraint")
 
 ```
 
@@ -679,25 +747,4 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ```
 
-## Percentage of households homeless or in temporary accommodation
 
-In 2018, 3.6% of Black households were statutorily homeless and in temporary accommodation, compared to 0.3% of White households.
-
-```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (temp_accomm_df$black[1] / sum(temp_accomm_df$black)), 2), 
-                                                      round(100 * (temp_accomm_df$white[1] / sum(temp_accomm_df$white)), 2)))
-
-ggplot(plot_data, aes(ethnicity, percentage)) + 
-  geom_col(colour = "black", fill = "#ff9000", width = .5) +
-  scale_y_continuous(limits =  c(0,5), breaks = seq(0,5,1), expand = c(0,0)) +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "black")) +
-  geom_label(aes(label = paste(round(percentage,2), "%", sep = ""))) +
-  xlab("Ethnicity") + ylab("Percentage") +
-  ggtitle("Percentage of households in temporary accommodation")
-
-```
