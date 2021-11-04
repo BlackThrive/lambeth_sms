@@ -1,6 +1,8 @@
 ---
-title: "Untitled"
-author: "JMW"
+title: |
+  | Black Thrive Shared Measurement System
+  | Lambeth
+author: "Jolyon Miles-Wilson"
 date: "05/10/2021"
 output: html_document
 ---
@@ -58,21 +60,6 @@ gcse_df <- df # save df
 xtab_gcse <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
 ```
 
-# Free meals
-```{r}
-b <- data.frame("black" = c(3165,7678))
-w <- data.frame("white" = c(429,3471))
-df <- cbind(b,w)
-rownames(df) <- c("free meals","no free meals")
-mat <- as.matrix(df)
-
-chisq.test(df)
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
-free_meals_df <- df # save df
-xtab_free_meals <- CrossTable(mat, chisq = T, fisher = T, expected = T)
-```
-
 # Employment
 ```{r}
 b <- data.frame("black" = c(30800,20534))
@@ -88,23 +75,9 @@ employment_df <- df # save df
 xtab_employment <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
 ```
 
-# CAMHS waiting time
-
-```{r}
-b <- data.frame("black" = c(151,171))
-w <- data.frame("white" = c(95,108))
-df <- cbind(b,w)
-rownames(df) <- c("wait 13+ weeks","not wait 13+ weeks")
-
-mat <- as.matrix(df)
-chisq.test(df)
-CrossTable(mat, chisq = T, fisher = T, expected = T)
-fisher.test(mat, simulate.p.value = T)
-camhs_df <- df # save df
-xtab_camhs <- CrossTable(mat, chisq = T, fisher = T, expected = T) 
-```
 
 # Talking therapies severely depressed on entry
+
 ```{r}
 b <- data.frame("black" = c(1020,550))
 w <- data.frame("white" = c(1563,1563))
@@ -121,6 +94,7 @@ xtab_talking_therapies <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 ```
 
 # Section 136
+
 ```{r}
 b <- data.frame("black" = c(38,63296))
 w <- data.frame("white" = c(44,109956))
@@ -242,12 +216,11 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ```
 
-
 # Results
 
 ## Dataframe
 
-```{r}
+```{r or_df, include = FALSE}
 # dataframe for odds ratios and cis
 
 or_df <- data.frame("indicator" = c("Employment (2020)", 
@@ -311,7 +284,7 @@ The plot below shows that the Black population in Lambeth experience worse outco
 * Black individuals are eight times more likely than White individuals to be stopped and searched by Police.
 * Black households are over twelve times as likely as White households to be homeless and living in temporary accommodation.
 
-```{r include = TRUE}
+```{r or_plot, include = FALSE}
 # test rescaling below 1, horizontal orientation , without caption
 bt_orange <- "#ff9000"
 or_df_2 <- or_df
@@ -380,48 +353,14 @@ ggplot(or_df_2, aes(indicator, OR)) +
 ```
 
 
-```{r}
-convert_to_rr <- function(or, ref_prob){
-  rr <- or / (1 - ref_prob + (ref_prob * or))
-  return(rr)
-}
+```{r rr_conversion}
+# function for converting ORs to RRs
+# convert_to_rr <- function(or, ref_prob){
+#   rr <- or / (1 - ref_prob + (ref_prob * or))
+#   return(rr)
+# }
+# ref_prob <- talking_therapies_df$white[1] / sum(talking_therapies_df$white)
 
-convert_to_rr_2 <- function(or, ref_prob){
-  rr <- or / ((1 - ref_prob) + (ref_prob * or))
-  return(rr)
-}
-
-ref_prob <- talking_therapies_df$white[1] / sum(talking_therapies_df$white)
-ref_prob <- gld_df$white[1] / sum(gld_df$white)
-ref_prob <- stop_search_df$White[1] / sum(stop_search_df$White)
-
-convert_to_rr(1.85, ref_prob)
-convert_to_rr(0.44, ref_prob)
-convert_to_rr_2(0.44, ref_prob)
-
-# test ci
-
-convert_to_rr_2(8.01, ref_prob)
-
-test <- matrix(c(101,380,493,807), 2, 2)
-
-convert_to_rr_2(xtab_gld[["fisher.ts"]][["estimate"]], ref_prob)
-convert_to_rr_2(xtab_gld[["fisher.ts"]][["conf.int"]][1], ref_prob)
-convert_to_rr_2(xtab_gld[["fisher.ts"]][["conf.int"]][2], ref_prob)
-k <- riskratio(test)
-
-
-stop_search_df
-test <- matrix(c(173548,46356,3852,8244),2,2)
-convert_to_rr_2(xtab_stop_search[["fisher.ts"]][["estimate"]], ref_prob)
-convert_to_rr_2(xtab_stop_search[["fisher.ts"]][["conf.int"]][1], ref_prob)
-convert_to_rr_2(xtab_stop_search[["fisher.ts"]][["conf.int"]][2], ref_prob)
-riskratio(test)
-```
-
-
-
-```{r}
 rr_from_df <- function(df, name){
   # function takes dfs made earlier, transforms in matrices, and creates risk
   # ratios and associated confidence intervals
@@ -461,7 +400,7 @@ rr_df <- rbind(rr_gld,
 
 ## RR Plot
 
-```{r include = TRUE}
+```{r rr_plot, include = TRUE}
 # test rescaling below 1, hrrizontal orientation , without caption
 bt_orange <- "#ff9000"
 rr_df_2 <- rr_df
@@ -526,23 +465,24 @@ ggplot(rr_df_2, aes(indicator, rr)) +
   ggtitle("The likelihood of outcomes for the Black population compared to \nthe White population")
   #labs(caption = "Note. rr = Odds ratio; bars represent 95% confidence interval")
 
-ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
+#ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
 ```
-## Table
 
-```{r include = TRUE}
-# table with ORS and CIS
+## RR table
+```{r rr_table, include = TRUE}
+# table with rrS and CIS
 
-or_df_3 <- or_df %>%
+rr_df_3 <- rr_df %>%
   mutate(
-    OR = round(OR, 2),
+    rr = round(rr, 2),
     ci_low = round(ci_low, 2),
     ci_upp = round(ci_upp, 2)
   )
-or_df_3 <- or_df_3[order(-c(or_df_3$OR)),]
+rr_df_3 <- rr_df_3[order(-c(rr_df_3$rr)),]
 
-or_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Odds Ratio", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Odds ratios and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
+rr_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Odds Ratio", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Odds ratios and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
 ```
+
 
 # Percentage breakdowns
 
