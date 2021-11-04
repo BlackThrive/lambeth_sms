@@ -4,15 +4,21 @@ title: |
   | Lambeth
 author: "Jolyon Miles-Wilson"
 date: "05/10/2021"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(include = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+
 ```
 
-# Packages
+
 ```{r}
 library(gmodels)
 library(ggplot2)
@@ -32,9 +38,9 @@ showtext_opts(dpi = resolution)
 ```
 
 
-# Good development
 
-```{r}
+
+```{r gld}
 # input stats from existing SMS
 b <- data.frame("black" = c(807, 380))
 w <- data.frame("white" = c(493, 101))
@@ -49,8 +55,8 @@ xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_gld <- xtab # save xtab for later
 ```
 
-# GCSE
-```{r}
+
+```{r gcse}
 b <- data.frame("black" = c(654, 494))
 w <- data.frame("white" = c(140, 83))
 df <- df <- cbind(b,w)
@@ -65,9 +71,9 @@ xtab_gcse <- xtab # save xtab for later
 
 ```
 
-# Employment
 
-```{r}
+
+```{r employment}
 b <- data.frame("black" = c(30800,20534))
 w <- data.frame("white" = c(117700,20771))
 df <- cbind(b,w)
@@ -83,9 +89,9 @@ xtab_employment <- xtab # save xtab for later
 ```
 
 
-# Talking therapies severely depressed on entry
 
-```{r}
+
+```{r therapies}
 b <- data.frame("black" = c(1020,550))
 w <- data.frame("white" = c(1563,1563))
 df <- cbind(b,w)
@@ -101,9 +107,8 @@ xtab_talking_therapies <- xtab # save xtab for later
 
 ```
 
-# Section 136
 
-```{r}
+```{r sect_136}
 b <- data.frame("black" = c(38,63296))
 w <- data.frame("white" = c(44,109956))
 df <- cbind(b,w)
@@ -117,9 +122,9 @@ xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_section_136 <- xtab # save xtab for later
 ```
 
-# Physical restraint
 
-```{r}
+
+```{r restraint}
 b <- data.frame("black" = c(228,123))
 w <- data.frame("white" = c(70,110))
 df <- cbind(b,w)
@@ -133,9 +138,8 @@ xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_restraint <- xtab # save xtab for later
 ```
 
-# Looked after by local authority
 
-```{r}
+```{r cla}
 b <- data.frame("black" = c(280,30155))
 w <- data.frame("white" = c(57,14943))
 df <- cbind(b,w)
@@ -149,9 +153,8 @@ xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_cla <- xtab # save xtab for later
 ```
 
-# In temporary accommodation
 
-```{r}
+```{r temp_accomm}
 b <- data.frame("black" = c(1169,31304))
 w <- data.frame("white" = c(166,55168))
 df <- cbind(b,w)
@@ -165,9 +168,9 @@ xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_temp_accomm <- xtab # save xtab for later
 ```
 
-# Stop and search
 
-```{r}
+
+```{r stop_search}
 # stop and search
 data <- read.csv("../data/Stops_LDS_Extract_12MonthsToEnd_202109.csv")
 
@@ -470,9 +473,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
 ```
 
-## RR table
-
-```{r rr_table, include = TRUE}
+```{r rr_table, include = FALSE}
 # table with rrS and CIS
 
 rr_df_3 <- rr_df %>%
