@@ -16,6 +16,15 @@ output:
     toc_depth: 2
     css: style.css
 always_allow_html: true
+header-includes: 
+  \usepackage{titling}
+  \pretitle{\begin{center}\LARGE\includegraphics[width=6cm]{../images/btg_logo.png}\\[\bigskipamount]}
+  \posttitle{\end{center}}
+  \usepackage{lscape}
+  \newcommand{\blandscape}{\begin{landscape}}
+  \newcommand{\elandscape}{\end{landscape}}
+  \usepackage{pdfpages}
+
 ---
 
 ```{r setup, include=FALSE}
@@ -617,7 +626,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
   geom_text(x = nrow(rr_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.15), label = "Less likely", colour = "black", size = 3.5, hjust = 0) +
   #geom_text(size = 3, nudge_x = -0.3, nudge_y = 0, aes(x = indicator,label = paste("rr =", round(original_rr, 2)),hjust = 0)) +
   geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_rr, 2),"x", sep=""),hjust = 0.5)) +
-  ggtitle("The likelihood of outcomes for the Black population \ncompared to the White population")
+  ggtitle("The likelihood of outcomes for the Black \npopulation compared to the White population")
   #labs(caption = "Note. rr = Odds ratio; bars represent 95% confidence interval")
 #dev.off()
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
@@ -649,7 +658,7 @@ rr_df_3 <- rr_df_3[order(-c(rr_df_3$rr)),]
 rr_df_3 %>% kable("html", escape = F, row.names = F, col.names = linebreak(c("Indicator", "Relative risk", "Lower confidence<br>interval (95%)", "Upper confidence<br>interval (95%)")), caption = "Relative risk and confidence intervals corresponding to the above plot") %>% kable_styling(full_width = F)
 ```
 
-
+\newpage
 # Percentage breakdowns
 
 The above results are broken down into percentages and rates below.
@@ -683,6 +692,7 @@ ggplot(total_data, aes(ethnicity, percentage)) +
   ggtitle("Percentage of children reaching a Good Level of Development")
 ```
 
+\newpage
 ## Children looked after by local authority
 
 In the 2018-2019 financial year, 0.75% of Black children were looked after by the local authority, compared to 0.28% of White children. Black children were `r round(100 * rr_df$rr[which(rr_df$short_name == "cla")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "cla")], 2)` times) more likely than White children to be looked after the local authority.
@@ -710,6 +720,8 @@ ggplot(total_data, aes(ethnicity, percentage)) +
 
 ```
 
+
+\newpage
 ## Pupils achieving Level 4+ in GCSE Maths and English
 
 In the 2019/2020 academic year, 68.3% of Black pupils and 67.6% of White pupils achieved at least Level 4 in GCSE Maths and English. This difference was non-significant.
@@ -743,6 +755,7 @@ ggplot(total_data, aes(ethnicity, percentage)) +
   ggtitle("Percentage of pupils achieving 4+ in GCSE Maths and English")
 ```
 
+\newpage
 ## Employment
 
 In 2020, the employment rate amongst Black 16-64 year olds was 71.5%, compared to 81.8% for White individuals. Black 16-64 year olds were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "employment")]), 2)`% less likely than White 16-64 year olds to be in employment.
@@ -779,6 +792,7 @@ ggplot(total_data, aes(ethnicity, percentage)) +
   ggtitle("Percentage of 16-64 year olds in employment")
 ```
 
+\newpage
 ## Percentage of households homeless or in temporary accommodation
 
 In the 2020/21 financial year, 2.84% of Black households were assessed as statutorily homeless or at risk of becoming homeless, compared to 0.38% of White households. Black households were `r round(100 * rr_df$rr[which(rr_df$short_name == "homeless")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "homeless")], 2)` times) more likely than White households to be statutorily homeless or at risk of becoming homeless.
@@ -807,6 +821,7 @@ ggplot(total_data, aes(ethnicity, percentage)) +
 
 ```
 
+\newpage
 ## Individuals subject to detention per Section 136 of the Mental Health Act
 
 In 2018-2019, the rate of individuals detained under Section 136 of the Mental Health act was 60 per 100,000 for Black individuals, compared to 40 per 100,000 for White individuals. There was no difference between Black and White individuals in Section 136 detention rate.
@@ -830,6 +845,7 @@ ggplot(plot_data, aes(ethnicity, per_100k)) +
 
 ```
 
+\newpage
 ## Individuals moderately to severely depressed on entering Talking Therapies
 
 In 2017-2018, 65% of Black individuals were moderately to severely depressed before starting Talking Therapies, compared to 50% of White individuals. Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "therapies")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "therapies")], 2)` times) more likely than White individuals to be moderately to severely depressed when they start Talking Therapies.
@@ -855,6 +871,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 
 
+\newpage
 ## Individuals physically restrained on Lambeth Wards
 
 In 2017-2018, 65% of Black Lambeth ward patients had physical restraint used on them, compared to 39% of White patients. Black ward patients were `r round(100 * rr_df$rr[which(rr_df$short_name == "restraint")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "restraint")], 2)` times) more likely than White ward patients to be physically restrained.
@@ -879,6 +896,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ```
 
+\newpage
 ## Individuals subject to Police Stop and Search
 
 In the period from September 2020 to August 2021, 15% of Black individuals in Lambeth were stopped and searched by Police, compared to 2% of White individuals. Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "stop_search")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "stop_search")], 2)` times) more likely than White individuals to be stopped and searched by Police.
@@ -913,6 +931,8 @@ This document was produced by the Research Team at Black Thrive Global:
 
 Any questions, comments, and/or feedback on any aspect of this analysis are greatly appreciated. Please contact Jolyon directly at jolyon.miles-wilson@blackthrive.org.
 
+\blandscape
+
 # Appendix
 
 ```{r include = TRUE, echo = FALSE}
@@ -942,16 +962,16 @@ sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Deve
                                     "2019"
                                     ),
                     "Source" = c("Lambeth Council, Education Research and Statistics Department",
-                                 "[Children looked after in England including adoption](https://www.gov.uk/government/statistics/children-looked-after-in-england-including-adoption-2018-to-2019)",
-                                 "[Key Stage 4 performance](https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance-revised#dataDownloads-1)",
-                                 "[Annual Population Survey (NOMIS, Office for National Statistics)](https://www.nomisweb.co.uk/datasets/apsnew)",
-                                 "[Live tables on homelessness; Detailed local authority level tables](https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness#homelessness-summary-local-authority-level-tables)",
+                                 "Children looked after in England including adoption",
+                                 "Key Stage 4 performance",
+                                 "Annual Population Survey (NOMIS, Office for National Statistics)",
+                                 "Live tables on homelessness; Detailed local authority level tables",
                                  "EPJS, South London and Maudsley NHS Foundation Trust",
                                  "IAPTUS, South London and Maudsley NHS Foundation Trust",
                                  "DATIX, South London and Maudsley NHS Foundation Trust",
-                                 "[Metropolitan Police Stop and Search Dashboard Data](https://data.london.gov.uk/dataset/mps-stop-and-search-public-dashboard-data)",
-                                 "[Annual Population Survey](https://www.nomisweb.co.uk/datasets/apsnew)",
-                                 "[Greater London Authority Ethnic group population projections](https://data.london.gov.uk/dataset/ethnic-group-population-projections)"
+                                 "Metropolitan Police Stop and Search Dashboard Data",
+                                 "Annual Population Survey",
+                                 "Greater London Authority Ethnic group population projections"
                                  ),
                     "Note" = c("Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
                                   "",
@@ -966,7 +986,13 @@ sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Deve
                                   "")
 )
 
-sources_df %>% kbl() %>%
-  kable_styling(full_width = F)
+sources_df %>% kable(format = "latex") %>%
+  
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "7em") %>%
+  column_spec(3, width = "20em") %>%
+  column_spec(4, width = "20em") 
 ```
 
+\elandscape
