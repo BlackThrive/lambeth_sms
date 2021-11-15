@@ -64,7 +64,7 @@ rr_from_df <- function(df, name){
 ```
 
 
-```{r gld}
+```{r gld, eval = FALSE}
 # input stats from existing SMS
 b <- data.frame("black" = c(807, 380))
 w <- data.frame("white" = c(493, 101))
