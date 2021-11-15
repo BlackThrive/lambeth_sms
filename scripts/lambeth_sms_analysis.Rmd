@@ -4,13 +4,18 @@ title: |
   | Lambeth
 date: "November 2021"
 output:
-  html_document:
-    toc: yes
-    toc_depth: 2
-    css: style.css
   pdf_document:
     toc: yes
     toc_depth: '2'
+  word_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 2
+    css: style.css
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -28,13 +33,13 @@ library(tidyverse)
 library(kableExtra)
 library(epitools)
 library(showtext)
-showtext_auto(enable = T)
-font_add("archivo",
-         regular = "../fonts/static/Archivo/Archivo-Regular.ttf",
-         italic = "../fonts/static/Archivo/Archivo-Italic.ttf",
-         bold = "../fonts/static/Archivo/Archivo-Bold.ttf",
-         bolditalic = "../fonts/static/Archivo/Archivo-BoldItalic.ttf"
-)
+showtext_auto(enable = F)
+# font_add("archivo",
+#          regular = "../fonts/static/Archivo/Archivo-Regular.ttf",
+#          italic = "../fonts/static/Archivo/Archivo-Italic.ttf",
+#          bold = "../fonts/static/Archivo/Archivo-Bold.ttf",
+#          bolditalic = "../fonts/static/Archivo/Archivo-BoldItalic.ttf"
+# )
 resolution <- 300
 showtext_opts(dpi = resolution)
 ```
@@ -72,12 +77,38 @@ gld_df <- df # save df
 # run analysis
 xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_gld <- xtab # save xtab for later
-rr_gld <- rr_from_df(gld_df, "Good Level of development at age 5 (2017-2018)")
+rr_gld <- rr_from_df(gld_df, "Good Level of development at age 5 (2018-2019)")
+
+```
+
+```{r gld_new}
+## good development
+data <- read.csv("../data/lambeth_gld_2018_2019.csv")
+
+total_data <- data
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+row.names(total_data) <- total_data$ethnicity # set row names for indexing
+
+# prepare data frame for crosstabs
+
+black <- data.frame("black" = c("gld_number" = total_data["Black", "gld"], "not_gld_number" = total_data["Black", "not_gld"]))
+
+white <- data.frame("white" = c("gld_number" = total_data["White", "gld"], "not_gld_number" =  total_data["White", "not_gld"]))
+
+bw_mat <- as.matrix(cbind(black, white)) # combine black and white into one matrix
+
+gld_df <- as.data.frame(bw_mat) # save df
+
+xtab <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T) # save xtab
+xtab_gld <- xtab # save for later
+rr_gld <- rr_from_df(gld_df, "Good Level of development at age 5 (2018-2019)")
 
 ```
 
 
-```{r gcse}
+```{r gcse, eval = FALSE}
 b <- data.frame("black" = c(654, 494))
 w <- data.frame("white" = c(140, 83))
 df <- df <- cbind(b,w)
@@ -93,9 +124,47 @@ rr_gcse <- rr_from_df(gcse_df, "Level 4+ GCSE Maths & English (2018)")
 
 ```
 
+```{r gcse_new}
+data <- read.csv("../data/lambeth_gcse_2019_2020.csv")
+
+# subset and rename
+total_data <- data %>%
+  subset(characteristic_gender == "Total") %>%
+  rename(
+    ethnicity = characteristic_Ethnic_major
+  ) %>%
+  subset(ethnicity == "BLACK" | ethnicity == "WHITE") %>%
+  rename(gcse = t_l2basics_94,
+         percent_gcse = pt_l2basics_94)
+
+# rename ethnicity levels and row names
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+row.names(total_data) <- total_data$ethnicity
+
+total_data <- total_data[,-c(1)] # remove unnecessary column
+
+# calculate number who didn't achieve level 4 plus
+total_data <- total_data %>%
+  mutate(
+    not_gcse = t_pupils - gcse
+  )
+
+# prepare data frame for xtab
+black <- data.frame("black" = c("gcse" = total_data["Black", "gcse"], "not_gcse" = total_data["Black", "not_gcse"]))
+white <- data.frame("white" = c("gcse" = total_data["White", "gcse"], "not_gcse" = total_data["White", "not_gcse"]))
+bw_mat <- as.matrix(cbind(black, white))
+
+gcse_df <- as.data.frame(bw_mat) # save df
+
+# run stats
+xtab <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+xtab_gcse <- xtab # save for later
+rr_gcse <- rr_from_df(gcse_df, "Level 4+ GCSE Maths & English (2019-2020)")
+```
 
 
-```{r employment}
+```{r employment, eval = FALSE}
 b <- data.frame("black" = c(30800,20534))
 w <- data.frame("white" = c(117700,20771))
 df <- cbind(b,w)
@@ -108,8 +177,36 @@ employment_df <- df # save df
 # run analysis
 xtab <- CrossTable(mat, chisq = T, fisher = T, expected = T)
 xtab_employment <- xtab # save xtab for later
-rr_employment <- rr_from_df(employment_df, "Employment rate (2020)")
+rr_employment <- rr_from_df(employment_df, "Employment rate (2020-2021)")
 
+```
+
+```{r employment_new}
+# employment
+data <- read.csv("../data/lambeth_employment_rate_march_2021_v2.csv")
+
+# subset and organise data
+total_data <- data %>%
+  mutate(
+    percentage = as.numeric(percentage),
+    numerator = as.numeric(numerator),
+    denominator = as.numeric(denominator)
+  )
+  
+row.names(total_data) <- total_data$ethnicity
+
+# prepare xtab
+black <- data.frame("black" = c("employed" = total_data["black", "numerator"], "not_employed" = total_data["black", "not_employed"]))
+white <- data.frame("white" = c("employed" = total_data["white", "numerator"], "not_employed" = total_data["white", "not_employed"]))
+bw_mat <- as.matrix(cbind(black, white))
+
+employment_df <- as.data.frame(bw_mat) # save df
+
+# run analysis
+xtab <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+xtab_employment <- xtab # save for later
+#chisq.test(bw_mat)
+rr_employment <- rr_from_df(employment_df, "Employment rate (2020-2021)")
 ```
 
 
@@ -170,7 +267,7 @@ rr_restraint <- rr_from_df(restraint_df, "Physical restraint in Lambeth wards (2
 ```
 
 
-```{r cla}
+```{r cla, eval = FALSE}
 b <- data.frame("black" = c(280,30155))
 w <- data.frame("white" = c(57,14943))
 df <- cbind(b,w)
@@ -186,8 +283,31 @@ xtab_cla <- xtab # save xtab for later
 rr_cla <- rr_from_df(cla_df, "Children looked after by local authority (2018)")
 ```
 
+```{r cla_new}
+# children looked after
+data <- read.csv("../data/lambeth_cla_2019.csv")
 
-```{r temp_accomm}
+total_data <- data
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+row.names(total_data) <- total_data$ethnicity
+
+# prepare xtab
+black <- data.frame("black" = c("looked_after" = total_data["Black", "looked_after"], "not_looked_after" = total_data["Black", "not_looked_after"]))
+white <- data.frame("white" = c("looked_after" = total_data["White", "looked_after"], "not_looked_after" = total_data["White", "not_looked_after"]))
+bw_mat <- as.matrix(cbind(black, white))
+
+cla_df <- as.data.frame(bw_mat) # save df
+
+# run analysis
+xtab <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+xtab_cla <- xtab # save for later
+rr_cla <- rr_from_df(cla_df, "Children looked after by local authority (2018-2019)")
+```
+
+
+```{r temp_accomm, eval = FALSE}
 b <- data.frame("black" = c(1169,31304))
 w <- data.frame("white" = c(166,55168))
 df <- cbind(b,w)
@@ -202,6 +322,28 @@ xtab_temp_accomm <- xtab # save xtab for later
 rr_temp_accomm <- rr_from_df(temp_accomm_df, "Statutorily homeless (2018)")
 ```
 
+```{r homeless_new}
+# homelessness
+data <- read.csv("../data/lambeth_stat_homeless_jun_2021.csv")
+
+total_data <- data
+
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+row.names(total_data) <- total_data$ethnicity
+
+# prepare xtab
+black <- data.frame("black" = c("homeless" = total_data["black", "homeless"], "not_homeless" = total_data["black", "not_homeless"]))
+white <- data.frame("white" = c("homeless" = total_data["white", "homeless"], "not_homeless" = total_data["white", "not_homeless"]))
+bw_mat <- as.matrix(cbind(black, white))
+
+homelessness_df <- as.data.frame(bw_mat) # save df
+
+# run analysis
+xtab <- CrossTable(bw_mat, fisher = T, chisq = T, expected = T)
+xtab_homelessness <- xtab # save for later
+#chisq.test(bw_mat)
+rr_homelessness <- rr_from_df(homelessness_df, "Statutorily homeless or at risk (2020-2021)")
+```
 
 
 ```{r stop_search}
@@ -261,9 +403,9 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 # Overview 
 
-This document presents the findings for the first version of Black Thrive Global's Shared Measurement System dashboard for Haringey. The aim of the dashboard is to quantify racial inequality in Haringey by comparing various indicators for the Black population with the White population. Doing so makes it possible to identify the aspects of life in Haringey where inequality is manifest and to highlight where change is needed. By routinely reassessing these indicators, it will also be possible to track if and how these inequalities change over time.
+This document presents the findings for the first version of Black Thrive Global's new Shared Measurement System dashboard for Lambeth. The aim of the dashboard is to quantify racial inequality in Lambeth by comparing various indicators for the Black population with the White population. Doing so makes it possible to identify the aspects of life in Lambeth where inequality is manifest and to highlight where change is needed. By routinely reassessing these indicators, it will also be possible to track if and how these inequalities change over time.
 
-All data presented, apart from the Police Stop and Search data, were sourced by Lambeth Public Health in a previous analysis. The indicators, and the sources of their data (as reported by Lambeth Public Health), are presented in the Appendix.
+The indicators, and the sources of their data, are presented in the Appendix.
 
 # Procedure and Results
 
@@ -287,7 +429,7 @@ or_df <- data.frame("indicator" = c("Employment (2020)",
                    xtab_employment[["fisher.ts"]][["estimate"]][[1]],
                    xtab_gcse[["fisher.ts"]][["estimate"]][[1]],
                    xtab_gld[["fisher.ts"]][["estimate"]][[1]],
-                   xtab_temp_accomm[["fisher.ts"]][["estimate"]][[1]],
+                   xtab_homelessness[["fisher.ts"]][["estimate"]][[1]],
                    xtab_stop_search[["fisher.ts"]][["estimate"]][[1]],
                    xtab_cla[["fisher.ts"]][["estimate"]][[1]],
                    xtab_restraint[["fisher.ts"]][["estimate"]][[1]],
@@ -298,7 +440,7 @@ or_df <- data.frame("indicator" = c("Employment (2020)",
                    xtab_employment[["fisher.ts"]][["conf.int"]][[1]], 
                    xtab_gcse[["fisher.ts"]][["conf.int"]][[1]], 
                    xtab_gld[["fisher.ts"]][["conf.int"]][[1]], 
-                   xtab_temp_accomm[["fisher.ts"]][["conf.int"]][[1]], 
+                   xtab_homelessness[["fisher.ts"]][["conf.int"]][[1]], 
                    xtab_stop_search[["fisher.ts"]][["conf.int"]][[1]],
                    xtab_cla[["fisher.ts"]][["conf.int"]][[1]],
                    xtab_restraint[["fisher.ts"]][["conf.int"]][[1]],
@@ -309,7 +451,7 @@ or_df <- data.frame("indicator" = c("Employment (2020)",
                    xtab_employment[["fisher.ts"]][["conf.int"]][[2]],
                    xtab_gcse[["fisher.ts"]][["conf.int"]][[2]],
                    xtab_gld[["fisher.ts"]][["conf.int"]][[2]],
-                   xtab_temp_accomm[["fisher.ts"]][["conf.int"]][[2]],
+                   xtab_homelessness[["fisher.ts"]][["conf.int"]][[2]],
                    xtab_stop_search[["fisher.ts"]][["conf.int"]][[2]],
                    xtab_cla[["fisher.ts"]][["conf.int"]][[2]],
                    xtab_restraint[["fisher.ts"]][["conf.int"]][[2]],
@@ -324,7 +466,7 @@ rr_df <- rbind(rr_gld,
                rr_gcse,
                rr_employment,
                rr_therapies,
-               rr_temp_accomm,
+               rr_homelessness,
                rr_stop_search,
                rr_restraint,
                rr_section_136,
@@ -334,7 +476,7 @@ rr_df$short_name <- c("gld",
                       "gcse",
                       "employment",
                       "therapies",
-                      "temp_accomm",
+                      "homeless",
                       "stop_search",
                       "restraint",
                       "section_136",
@@ -393,8 +535,8 @@ ggplot(or_df_2, aes(indicator, OR)) +
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
     panel.background = element_rect(fill = "white"),
     plot.background = element_rect(fill = "white"),
-    text = element_text(family = "archivo", size = 12),
-    axis.text = element_text(family = "archivo", colour = "black"),
+    text = element_text(size = 12),
+    axis.text = element_text( colour = "black"),
     plot.caption = element_text(face = "italic"),
     plot.title = element_text(size = 12)
   ) +
@@ -421,7 +563,7 @@ rr_df_2$original_rr <- rr_df_2$rr # keep original rr values
 rr_df_2 <- rr_df_2[order(rr_df_2$rr),] # order df from lowest to highest
 rr_df_2$indicator <- fct_inorder(rr_df_2$indicator) # put levels in order they appear in df
 
-reduction_factor <- 14 # set reduction factor
+reduction_factor <- ceiling(max(rr_df_2$ci_upp)) # set reduction factor
 for(i in 1:nrow(rr_df_2)){
   if(rr_df_2$rr[i] < 1){ # expand values below 1
     rr_df_2$rr[i] <- reduction_factor * (0 - (1 - rr_df_2$rr[i]))
@@ -435,7 +577,7 @@ for(i in 1:nrow(rr_df_2)){
   }
 }
 
-tiff("../images/lambeth_sms.tiff", units = "in", width = 10, height = 6, res = resolution)
+#tiff("../images/lambeth_sms.tiff", units = "in", width = 10, height = 6, res = resolution)
 ggplot(rr_df_2, aes(indicator, rr)) +
   geom_hline(yintercept = 0, colour = bt_orange, size = 1) +
   geom_point(size = 2) +
@@ -464,34 +606,34 @@ ggplot(rr_df_2, aes(indicator, rr)) +
     #axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
     panel.background = element_rect(fill = "white"),
     plot.background = element_rect(fill = "white"),
-    text = element_text(family = "archivo", size = 12),
-    axis.text = element_text(family = "archivo", colour = "black"),
+    text = element_text(size = 12),
+    axis.text = element_text( colour = "black"),
     plot.caption = element_text(face = "italic"),
     plot.title = element_text(size = 10)
   ) +
   annotate("segment", x = nrow(rr_df) + 1, xend = nrow(rr_df) + 1, y = reduction_factor/30, yend = reduction_factor * 0.9, arrow = arrow(angle = 45), size = 1) +
-  geom_text(x = nrow(rr_df) + 1.5, y = reduction_factor*.9 - (reduction_factor*0.15), label = "More likely", colour = "black", size = 3.5, hjust = 1, family = "archivo") +
+  geom_text(x = nrow(rr_df) + 1.5, y = reduction_factor*.9 - (reduction_factor*0.15), label = "More likely", colour = "black", size = 3.5, hjust = 1) +
   annotate("segment", x = nrow(rr_df) + 1, xend =  nrow(rr_df) + 1, y = (reduction_factor/-30), yend = -1*reduction_factor*0.9, arrow = arrow(angle = 45), size = 1) +
-  geom_text(x = nrow(rr_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.15), label = "Less likely", colour = "black", size = 3.5, hjust = 0, family = "archivo") +
+  geom_text(x = nrow(rr_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.15), label = "Less likely", colour = "black", size = 3.5, hjust = 0) +
   #geom_text(size = 3, nudge_x = -0.3, nudge_y = 0, aes(x = indicator,label = paste("rr =", round(original_rr, 2)),hjust = 0)) +
   geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_rr, 2),"x", sep=""),hjust = 0.5)) +
-  ggtitle("The likelihood of outcomes for the Black population compared to the White population")
+  ggtitle("The likelihood of outcomes for the Black population \ncompared to the White population")
   #labs(caption = "Note. rr = Odds ratio; bars represent 95% confidence interval")
-dev.off()
+#dev.off()
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
 ```
 
 To summarise the results:
 
-* Black 16-64 year olds were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "employment")]), 2)`% less likely than White 16-64 year olds to be in employment.
 * Black children were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "gld")]), 2)`% less likely than White children to reach a Good Level of Development at age 5.
+* Black 16-64 year olds were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "employment")]), 2)`% less likely than White 16-64 year olds to be in employment.
 * Black pupils were just as likely as White pupils to achieve at least Level 4 in GCSE Maths and English.
 * Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "therapies")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "therapies")], 2)` times) more likely than White individuals to be moderately to severely depressed when they start Talking Therapies.
 * Black individuals were just as likely as White individuals to be detained under Section 136 of the Mental Health Act.
 * Black ward patients were `r round(100 * rr_df$rr[which(rr_df$short_name == "restraint")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "restraint")], 2)` times) more likely than White ward patients to be physically restrained.
 * Black children were `r round(100 * rr_df$rr[which(rr_df$short_name == "cla")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "cla")], 2)` times) more likely than White children to be looked after the local authority.
 * Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "stop_search")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "stop_search")], 2)` times) more likely than White individuals to be stopped and searched by Police.
-* Black households were `r round(100 * rr_df$rr[which(rr_df$short_name == "temp_accomm")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "temp_accomm")], 2)` times) more likely than White households to be statutorily homeless and living in temporary accommodation.
+* Black households were `r round(100 * rr_df$rr[which(rr_df$short_name == "homeless")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "homeless")], 2)` times) more likely than White households to be statutorily homeless and living in temporary accommodation.
 
 ```{r rr_table, include = FALSE}
 # table with rrS and CIS
@@ -514,15 +656,18 @@ The above results are broken down into percentages and rates below.
 
 ## Children reaching a good level of development at age 5
 
-In 2017-2018, 68% of Black children reached a Good Level of Development, compared to 83% of White children. Black children. Black children were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "gld")]), 2)`% less likely than White children to reach a Good Level of Development at age 5.
+In 2018-2019, 67.46% of Black children reached a Good Level of Development, compared to 77.98% of White children. Black children were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "gld")]), 2)`% less likely than White children to reach a Good Level of Development at age 5.
 
 
 ```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (gld_df$black[1] / sum(gld_df$black)), 2), 
-                                                      round(100 * (gld_df$white[1] / sum(gld_df$white)), 2)))
+## good development
+data <- read.csv("../data/lambeth_gld_2018_2019.csv")
 
-ggplot(plot_data, aes(ethnicity, percentage)) + 
+total_data <- data
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+ggplot(total_data, aes(ethnicity, percentage)) + 
   geom_col(fill = "#ff9000", colour = "black", width = .5) +
   scale_y_continuous(limits =  c(0,100), breaks = seq(0,100,10), expand = c(0,0)) +
   theme(panel.background = element_rect(fill = "white"),
@@ -540,15 +685,18 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ## Children looked after by local authority
 
-In 2017-2018, 0.92% of Black children were looked after by the local authority, compared to 0.38% of White children. Black children were `r round(100 * rr_df$rr[which(rr_df$short_name == "cla")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "cla")], 2)` times) more likely than White children to be looked after the local authority.
+In the 2018-2019 financial year, 0.75% of Black children were looked after by the local authority, compared to 0.28% of White children. Black children were `r round(100 * rr_df$rr[which(rr_df$short_name == "cla")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "cla")], 2)` times) more likely than White children to be looked after the local authority.
 
 
 ```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (cla_df$black[1] / sum(cla_df$black)), 2), 
-                                                      round(100 * (cla_df$white[1] / sum(cla_df$white)), 2)))
+# children looked after
+data <- read.csv("../data/lambeth_cla_2019.csv")
 
-ggplot(plot_data, aes(ethnicity, percentage)) + 
+total_data <- data
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+ggplot(total_data, aes(ethnicity, percentage)) + 
   geom_col(colour = "black", fill = "#ff9000", width = .5) +
   scale_y_continuous(limits =  c(0,2), breaks = seq(0,2,1), expand = c(0,0)) +
   theme(panel.background = element_rect(fill = "white"),
@@ -564,14 +712,25 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ## Pupils achieving Level 4+ in GCSE Maths and English
 
-In 2018, 57% of Black pupils and 63% of White pupils achieved at least Level 4 in GCSE Maths and English. This difference was non-significant.
+In the 2019/2020 academic year, 68.3% of Black pupils and 67.6% of White pupils achieved at least Level 4 in GCSE Maths and English. This difference was non-significant.
 
 ```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (gcse_df$black[1] / sum(gcse_df$black)), 2), 
-                                                      round(100 * (gcse_df$white[1] / sum(gcse_df$white)), 2)))
+data <- read.csv("../data/lambeth_gcse_2019_2020.csv")
 
-ggplot(plot_data, aes(ethnicity, percentage)) + 
+# subset and rename
+total_data <- data %>%
+  subset(characteristic_gender == "Total") %>%
+  rename(
+    ethnicity = characteristic_Ethnic_major
+  ) %>%
+  subset(ethnicity == "BLACK" | ethnicity == "WHITE") %>%
+  rename(gcse = t_l2basics_94,
+         percentage = pt_l2basics_94)
+
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+ggplot(total_data, aes(ethnicity, percentage)) + 
   geom_col(colour = "black", fill = "#ff9000", width = .5) +
   scale_y_continuous(limits =  c(0,100), breaks = seq(0,100,10), expand = c(0,0)) +
   theme(panel.background = element_rect(fill = "white"),
@@ -586,15 +745,25 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ## Employment
 
-In 2020, the employment rate amongst Black 16-64 year olds was 60%, compared to 85% for White individuals. Black 16-64 year olds were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "employment")]), 2)`% less likely than White 16-64 year olds to be in employment.
+In 2020, the employment rate amongst Black 16-64 year olds was 71.5%, compared to 81.8% for White individuals. Black 16-64 year olds were `r round(100 * (1 - rr_df$rr[which(rr_df$short_name == "employment")]), 2)`% less likely than White 16-64 year olds to be in employment.
 
 
 ```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (employment_df$black[1] / sum(employment_df$black)), 2), 
-                                                      round(100 * (employment_df$white[1] / sum(employment_df$white)), 2)))
+# employment
+data <- read.csv("../data/lambeth_employment_rate_march_2021_v2.csv")
 
-ggplot(plot_data, aes(ethnicity, percentage)) + 
+# subset and organise data
+total_data <- data %>%
+  mutate(
+    percentage = as.numeric(percentage),
+    numerator = as.numeric(numerator),
+    denominator = as.numeric(denominator)
+  )
+  
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+ggplot(total_data, aes(ethnicity, percentage)) + 
   geom_col(colour = "black", fill = bt_orange, width = .5) +
   scale_y_continuous(limits =  c(0,100), breaks = seq(0,100,10), expand = c(0,0)) +
   theme(panel.background = element_rect(fill = "white"),
@@ -612,15 +781,19 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ## Percentage of households homeless or in temporary accommodation
 
-In 2018, 3.6% of Black households were statutorily homeless and in temporary accommodation, compared to 0.3% of White households. Black households were `r round(100 * rr_df$rr[which(rr_df$short_name == "temp_accomm")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "temp_accomm")], 2)` times) more likely than White households to be statutorily homeless and living in temporary accommodation.
+In the 2020/21 financial year, 2.84% of Black households were assessed as statutorily homeless or at risk of becoming homeless, compared to 0.38% of White households. Black households were `r round(100 * rr_df$rr[which(rr_df$short_name == "homeless")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "homeless")], 2)` times) more likely than White households to be statutorily homeless or at risk of becoming homeless.
 
 
 ```{r include = TRUE}
-plot_data <- data.frame("ethnicity" = c("Black", "White"),
-                                     "percentage" = c(round(100 * (temp_accomm_df$black[1] / sum(temp_accomm_df$black)), 2), 
-                                                      round(100 * (temp_accomm_df$white[1] / sum(temp_accomm_df$white)), 2)))
+# homelessness
+data <- read.csv("../data/lambeth_stat_homeless_jun_2021.csv")
 
-ggplot(plot_data, aes(ethnicity, percentage)) + 
+total_data <- data
+
+total_data$ethnicity <- as.factor(total_data$ethnicity)
+levels(total_data$ethnicity) <- c("Black","White")
+
+ggplot(total_data, aes(ethnicity, percentage)) + 
   geom_col(colour = "black", fill = "#ff9000", width = .5) +
   scale_y_continuous(limits =  c(0,5), breaks = seq(0,5,1), expand = c(0,0)) +
   theme(panel.background = element_rect(fill = "white"),
@@ -743,38 +916,54 @@ Any questions, comments, and/or feedback on any aspect of this analysis are grea
 # Appendix
 
 ```{r include = TRUE, echo = FALSE}
-sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Development",
+sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Development at age 5",
                                         "Children looked after by local authority",
                                     "Pupils achieving at least Level 4 in GCSE Maths & English",
                                    
                                     "16-64 year olds in employment",
-                                    "Households that are statutorily homeless and living in temporary accommodation",
+                                    "Households that are statutorily homeless or at risk of becoming homeless",
                                     "Individuals subject to detention per Section 136 of the Mental Health Act",
                                     "Individuals moderately to severely depressed prior to starting Talking Therapies",
                                     "Lambeth ward patients physically restrained",
-                                    "Individuals subject to Police Stop and Search"
-                                    
+                                    "Individuals subject to Police Stop and Search",
+                                    "Lambeth adult population estimates",
+                                    "Lambeth child population estimates"
                                     ),
-                         "Date" = c("2018/19",
-                                    "2019/20",
+                         "Date" = c("2018/19 academic year",
                                     "2018/19",
-                                    "12 months to June 2020",
-                                    "2018",
+                                    "2019/20 academic year",
+                                    "12 months to March 2021",
+                                    "2020/2021 financial year",
                                     "2018/19",
                                     "2017/18",
                                     "2017/18",
-                                    "12 months to August 2021"
+                                    "12 months to August 2021",
+                                    "2021",
+                                    "2019"
                                     ),
                     "Source" = c("Lambeth Council, Education Research and Statistics Department",
-                                 "Lambeth Council, Education Research and Statistics Department",
-                                 "Lambeth Council, Education Research and Statistics Department",
-                                 "Annual Population Survey (NOMIS, Office for National Statistics)",
-                                 "Lambeth Council Housing Advice Team",
+                                 "[Children looked after in England including adoption](https://www.gov.uk/government/statistics/children-looked-after-in-england-including-adoption-2018-to-2019)",
+                                 "[Key Stage 4 performance](https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance-revised#dataDownloads-1)",
+                                 "[Annual Population Survey (NOMIS, Office for National Statistics)](https://www.nomisweb.co.uk/datasets/apsnew)",
+                                 "[Live tables on homelessness; Detailed local authority level tables](https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness#homelessness-summary-local-authority-level-tables)",
                                  "EPJS, South London and Maudsley NHS Foundation Trust",
                                  "IAPTUS, South London and Maudsley NHS Foundation Trust",
                                  "DATIX, South London and Maudsley NHS Foundation Trust",
-                                 "Metropolitan Police Stop and Search Dashboard Data"
-                                 )
+                                 "[Metropolitan Police Stop and Search Dashboard Data](https://data.london.gov.uk/dataset/mps-stop-and-search-public-dashboard-data)",
+                                 "[Annual Population Survey](https://www.nomisweb.co.uk/datasets/apsnew)",
+                                 "[Greater London Authority Ethnic group population projections](https://data.london.gov.uk/dataset/ethnic-group-population-projections)"
+                                 ),
+                    "Note" = c("Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
+                                  "",
+                                  "",
+                                  "",
+                                  "",
+                                  "Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
+                                  "Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
+                                  "Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
+                                  "",
+                                  "",
+                                  "")
 )
 
 sources_df %>% kbl() %>%
