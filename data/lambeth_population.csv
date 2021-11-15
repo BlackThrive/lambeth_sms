@@ -1,0 +1,22 @@
+
+"annual population survey"
+"ONS Crown Copyright Reserved [from Nomis on 15 November 2021]"
+"Analysis   :","standard"
+"Date       :","Jul 2020-Jun 2021"
+"Confidence :","95% confidence interval (+/-)"
+
+"Cell","Lambeth","Conf"
+
+"T18:4 (All Ages - White : All People )",177400,35200
+"T18:16 (All Ages - Black : All People )",54600,19600
+
+
+
+"","Reweighting of the Labour Force Survey and Annual Population Survey has made"
+"","the estimates for UK, EU and non-EU more robust, but there remains a high"
+"","level of uncertainty for data below this level. Changes in those more"
+"","detailed estimates are likely to reflect the fact that the methodological"
+"","changes were not targeted at the detailed level, and therefore numbers"
+"","should not be compared against previous years."
+"",""
+

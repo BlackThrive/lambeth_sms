@@ -6,3 +6,51 @@ Population data
 Stop and Search
     Filename: Stops_LDS_Extract_12MonthsToEnd_202109.csv
     Source: MPS Stop and Search Dashboard data (https://data.london.gov.uk/dataset/mps-stop-and-search-public-dashboard-data)
+
+GCSE 4+ English and Maths
+    Filename: 1920_lachardata.csv
+    Source: Key Stage 4 performance 2019/20 (https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance-revised#dataDownloads-1); 
+    Data selected: la_name == Lambeth; breakdown == Ethnic major
+    Notes: 
+        Variables of interest: pt_l2basics_94 (percentage) & t_l2basics_94 (total)
+        Ethnicity data is not very high resolution. Broad categories: Asian, Black, Chinese, Mixed, and White. 
+
+Employment rate
+    Filename: employment_to_march_2021.csv
+    Source: NOMIS Annual Population Survey (https://www.nomisweb.co.uk/datasets/apsnew)
+    Data selected: GEOGRAPHY: local authorities: district/unitary > London > Lambeth; DATE: 12 months to March 2021; CATEGORY: Ethnic group by economic activity; aged 16-64 employment rate - white;	aged 16-64 employment rate for all Black or black British.
+
+Population:
+    Filename: lambeth_population.csv
+    Source: Annual Population Survey (NOMIS)
+    Data selected: Lambeth; date == 12 months to Jun 2021; Ethnicity by age; All ages; White, Black
+    Notes: This is to provide a population estimate for other indicators, e.g. stop and search
+
+Children looked after
+    Filename: CLA2019.csv
+    Source: Children looked after in England including adoption: 2018 to 2019; Underlying data:  children looked after in England including adoption 2018 to 2019 (https://www.gov.uk/government/statistics/children-looked-after-in-england-including-adoption-2018-to-2019#history)
+    Data selected: geog_n == Lambeth
+    Notes:
+        Variables of interest: CLA_*ethnicity* and CLA_*ethnicity*_pc
+        Ethnicity data is not very high resolution. Broad categories: Asian, Black, Chinese, Mixed, and White.
+
+Statutory homelessness
+    Filename: lambeth_stat_homeless_jun_2021.csv
+    Source: Live tables on homelessness; Detailed local authority level tables: financial year 2020-21 (https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness#homelessness-summary-local-authority-level-tables)
+    Data selected: Table A8 Ethnicity of main applicants assessed as owed a prevention or relief duty by local authority 2020-21 financial year
+    Notes:
+        This is not technically number in temporary accommodation, but those assessed as in danger or currently homeless (replaces earlier versions discontinued in 2018).
+
+Child population (improved):
+    Filename: Ethnic group projections (2016-based central trend).xlsx
+    Source: GLA Ethnic group population projections (https://data.london.gov.uk/dataset/ethnic-group-population-projections) 
+    Data selected: borough == Haringey; age = 0-17 years; ethnic_group == Black African, Black Caribbean, Other Black | White British, White Irish, Other White
+    Notes: 
+        Once data filtered, for each ethnicity, I chose the column 2019, copied and pasted it to another sheet, and calculated the sum of the column.
+        I used 2016-based central trend, but there is also an option for 2015-based housing-led
+
+Good level of development
+    Filename: EYFSP_LA_1_key_measures_additional_tables_2013_2019.xlsx
+    Source: Early years foundation stage profile results: 2018 - 2019; DYFSP pupil characteristics 2019: underlying data (https://www.gov.uk/government/statistics/early-years-foundation-stage-profile-results-2018-to-2019)
+    Data selected: la_name == Lambeth; characteristic == Ethnicity; time_period == 201819; characteristic_type: Black, White
+    Notes: Ethnicity data is not very high resolution. Broad categories: Asian, Black, Chinese, Mixed, and White. 
