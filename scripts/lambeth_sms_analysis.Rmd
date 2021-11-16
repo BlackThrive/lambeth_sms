@@ -961,7 +961,7 @@ sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Deve
                                     "2021",
                                     "2019"
                                     ),
-                    "Source" = c("Lambeth Council, Education Research and Statistics Department",
+                    "Source" = c("Early Years Foundation Stage Profile results",
                                  "Children looked after in England including adoption",
                                  "Key Stage 4 performance",
                                  "Annual Population Survey (NOMIS, Office for National Statistics)",
@@ -973,7 +973,7 @@ sources_df <- data.frame("Indicator" = c("Children reaching a Good Level of Deve
                                  "Annual Population Survey",
                                  "Greater London Authority Ethnic group population projections"
                                  ),
-                    "Note" = c("Analyses based on crosstabulations derived from data sourced by Lambeth Public Health",
+                    "Note" = c("",
                                   "",
                                   "",
                                   "",
