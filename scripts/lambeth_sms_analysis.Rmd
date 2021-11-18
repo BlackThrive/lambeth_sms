@@ -346,7 +346,7 @@ rr_homelessness <- rr_from_df(homelessness_df, "Statutorily homeless or at risk 
 ```
 
 
-```{r stop_search}
+```{r stop_search, include = FALSE, eval = FALSE}
 # stop and search
 data <- read.csv("../data/Stops_LDS_Extract_12MonthsToEnd_202109.csv")
 
@@ -398,6 +398,47 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
   geom_label(aes(label = paste(round(percentage,2),"%", sep = ""))) +
   xlab("Ethnicity") + ylab("Percentage of individuals \n subject to Police Stop and Search")
 
+```
+
+
+```{r stop_search_self}
+# stop and search
+data <- read.csv("../data/Stops_LDS_Extract_12MonthsToEnd_202108.csv")
+
+data <- subset(data, Borough.of.Stop == "Lambeth") # subset to Lambeth
+
+# self-defined ethnicity
+self_defined_freq_data <- data %>%
+  group_by(SDE.Group) %>%
+  summarise(
+    stopped = n() # count frequencies
+  )
+
+self_defined_freq_data <- self_defined_freq_data %>%
+  mutate(
+    pop = c(6500, 54600, 26700, 177400), # Lambeth population estimates taken from APS 12 months to Jun 2021
+    percentage = 100 * (stopped/pop),
+    not_stopped = pop - stopped
+    ) %>%
+  rename(
+    ethnicity = SDE.Group
+  )
+
+self_defined_freq_data <- as.data.frame(self_defined_freq_data)
+row.names(self_defined_freq_data) <- self_defined_freq_data$ethnicity
+
+black <- data.frame("Black" = c("stopped" = self_defined_freq_data["Black", "stopped"], "not_stopped" = self_defined_freq_data["Black", "not_stopped"]))
+
+white <- data.frame("White" = c("stopped" = self_defined_freq_data["White", "stopped"], "not_stopped" = self_defined_freq_data["White", "not_stopped"]))
+
+bw_mat <- as.matrix(cbind(black, white))
+
+stop_search_df <- as.data.frame(bw_mat) # save df
+
+# run analysis
+xtab <- CrossTable(bw_mat, chisq = T, fisher = T, expected = T)
+xtab_stop_search <- xtab # save xtab for later
+rr_stop_search <- rr_from_df(stop_search_df, "Police Stop and Search (2020-2021)")
 ```
 
 
@@ -484,7 +525,7 @@ rr_df$short_name <- c("gld",
 ```
 
 
-```{r or_plot, include = FALSE}
+```{r or_plot, eval = FALSE, include = FALSE}
 # test rescaling below 1, horizontal orientation , without caption
 bt_orange <- "#ff9000"
 or_df_2 <- or_df
@@ -881,7 +922,7 @@ ggplot(plot_data, aes(ethnicity, percentage)) +
 
 ## Individuals subject to Police Stop and Search
 
-In the period from September 2020 to August 2021, 15% of Black individuals in Lambeth were stopped and searched by Police, compared to 2% of White individuals. Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "stop_search")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "stop_search")], 2)` times) more likely than White individuals to be stopped and searched by Police.
+In the period from September 2020 to August 2021, 9.49% of Black individuals in Lambeth were stopped and searched by Police, compared to % of White individuals. Black individuals were `r round(100 * rr_df$rr[which(rr_df$short_name == "stop_search")],0) - 100`% (i.e., `r round(rr_df$rr[which(rr_df$short_name == "stop_search")], 2)` times) more likely than White individuals to be stopped and searched by Police.
 
 
 ```{r include = TRUE}
@@ -912,6 +953,10 @@ This document was produced by the Research Team at Black Thrive Global:
 **Dr Celestin Okoroji**
 
 Any questions, comments, and/or feedback on any aspect of this analysis are greatly appreciated. Please contact Jolyon directly at jolyon.miles-wilson@blackthrive.org.
+
+# Supporting information
+
+The R code that produced this report is available on Github [here](https://github.com/JolyonJoseph/lambeth_sms). A separate methodology paper that provides more detail on the data and analysis procedure is available [here](https://github.com/JolyonJoseph/sms_methodology).
 
 # Appendix
 
