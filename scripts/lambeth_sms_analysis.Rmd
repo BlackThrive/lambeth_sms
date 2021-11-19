@@ -952,11 +952,11 @@ This document was produced by the Research Team at Black Thrive Global:
 
 **Dr Celestin Okoroji**
 
-Any questions, comments, and/or feedback on any aspect of this analysis are greatly appreciated. Please contact Jolyon directly at jolyon.miles-wilson@blackthrive.org.
+Any questions, comments, and/or feedback on any aspect of this analysis are greatly appreciated. Please contact us at research@blackthrive.org, FAO Jolyon Miles-Wilson.
 
 # Supporting information
 
-The R code that produced this report is available on Github [here](https://github.com/JolyonJoseph/lambeth_sms). A separate methodology paper that provides more detail on the data and analysis procedure is available [here](https://github.com/JolyonJoseph/sms_methodology).
+The R code that produced this report is available on Github [here](https://github.com/BlackThrive/lambeth_sms). A separate methodology paper that provides more detail on the data and analysis procedure is available [here](https://github.com/BlackThrive/sms_methodology).
 
 # Appendix
 
