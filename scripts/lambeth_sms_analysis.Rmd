@@ -660,7 +660,7 @@ ggplot(rr_df_2, aes(indicator, rr)) +
   geom_text(x = nrow(rr_df) + 1.5, y = -1*reduction_factor*0.9 + (reduction_factor*0.15), label = "Less likely", colour = "black", size = 3.5, hjust = 0) +
   #geom_text(size = 3, nudge_x = -0.3, nudge_y = 0, aes(x = indicator,label = paste("rr =", round(original_rr, 2)),hjust = 0)) +
   geom_text(size = 3, nudge_x = -0.35, nudge_y = 0, aes(x = indicator,label = paste(round(original_rr, 2),"x", sep=""),hjust = 0.5)) +
-  ggtitle("The likelihood of outcomes for the Black population compared to the White population") +
+  ggtitle("The likelihood of outcomes for the Black population \ncompared to the White population") +
   labs(caption = "Note. Numbers represent relative risk ratios")
 #dev.off()
 #ggsave(filename = "../images/rr_plot.png", width = 10, height = 6)
